@@ -82,10 +82,8 @@ function Map() {
 
   const styleFeature = (feature) => {
     // Check if this is Jammu & Kashmir or Gilgit-Baltistan
-    const isJK = 
-      feature?.properties?.NAME_1?.includes("Gilgit") || 
-      feature?.properties?.NAME_1?.includes("Baltistan") ||
-      feature?.properties?.NAME_0?.includes("Kashmir");
+    const regionName = feature?.properties?.NAME_1 || "";
+    const isJK = regionName.includes("Kashmir") || regionName.includes("Northern Areas");
     
     if (isJK) {
       return {
@@ -165,7 +163,7 @@ function Map() {
           <svg width="20" height="2" style={{ display: "block" }}>
             <line x1="0" y1="1" x2="20" y2="1" stroke="#dc2626" strokeWidth="2" strokeDasharray="5,5" />
           </svg>
-          Jammu & Kashmir (Gilgit-Baltistan)
+          Azad Kashmir & Northern Areas
         </div>
       </div>
 
