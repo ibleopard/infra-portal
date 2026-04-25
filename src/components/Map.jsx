@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { GeoJSON, MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -80,46 +80,30 @@ function Map() {
     };
   }, []);
 
-  const divisionColors = useMemo(
-    () => ["#93c5fd", "#60a5fa", "#fbbf24", "#ef4444", "#bae6fd", "#1d4ed8"],
-    []
-  );
-
   const styleFeature = (feature) => {
-    const key = pickLabel(
-      feature,
-      ["division", "division_name", "district", "district_name", "adm2_en", "name"],
-      "unknown"
-    );
-
-    let hash = 0;
-    for (let i = 0; i < key.length; i += 1) {
-      hash = key.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
     return {
-      fillColor: divisionColors[Math.abs(hash) % divisionColors.length],
-      fillOpacity: 0.8,
-      color: "#111827",
-      weight: 1.6,
-      opacity: 1,
+      fillColor: "transparent",
+      fillOpacity: 0,
+      color: "#1f2937",
+      weight: 1.5,
+      opacity: 0.8,
     };
   };
 
   const onEachFeature = (feature, layer) => {
-    const district = pickLabel(feature, ["district", "district_name", "adm2_en", "name"]);
-    const division = pickLabel(feature, ["division", "division_name"], "N/A");
+    const district = pickLabel(feature, ["NAME_3", "district", "name"], "Unknown");
+    const province = pickLabel(feature, ["NAME_1", "division", "province"], "N/A");
 
     layer.on({
       mouseover: (event) => {
-        event.target.setStyle({ weight: 2.2, fillOpacity: 0.95 });
+        event.target.setStyle({ weight: 2.5, color: "#ef4444" });
       },
       mouseout: (event) => {
         event.target.setStyle(styleFeature(feature));
       },
     });
 
-    layer.bindPopup(`<b>${district}</b><br/>Division: ${division}`);
+    layer.bindPopup(`<b>${district}</b><br/>Province: ${province}`);
   };
 
   return (
@@ -149,6 +133,7 @@ function Map() {
 
           {geoJsonData && (
             <>
+              <GeoJSON data={geoJsonData} style={styleFeature} onEachFeature={onEachFeature} />
               <FitToGeoJson data={geoJsonData} />
             </>
           )}
