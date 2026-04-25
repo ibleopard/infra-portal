@@ -81,6 +81,23 @@ function Map() {
   }, []);
 
   const styleFeature = (feature) => {
+    // Check if this is Jammu & Kashmir or Gilgit-Baltistan
+    const isJK = 
+      feature?.properties?.NAME_1?.includes("Gilgit") || 
+      feature?.properties?.NAME_1?.includes("Baltistan") ||
+      feature?.properties?.NAME_0?.includes("Kashmir");
+    
+    if (isJK) {
+      return {
+        fillColor: "transparent",
+        fillOpacity: 0,
+        color: "#dc2626",
+        weight: 2.5,
+        opacity: 1,
+        dashArray: "5, 5",
+      };
+    }
+
     return {
       fillColor: "transparent",
       fillOpacity: 0,
@@ -123,6 +140,34 @@ function Map() {
 
       {isLoading && <p style={{ margin: "0 0 12px", color: "#6b7280" }}>Loading boundaries…</p>}
       {error && <p style={{ margin: "0 0 12px", color: "#b91c1c" }}>{error}</p>}
+
+      <div
+        style={{
+          margin: "0 0 15px",
+          display: "flex",
+          gap: "20px",
+          fontSize: "12px",
+          color: "#374151",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div
+            style={{
+              width: "20px",
+              height: "2px",
+              background: "#1f2937",
+              borderRadius: "1px",
+            }}
+          />
+          Districts
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <svg width="20" height="2" style={{ display: "block" }}>
+            <line x1="0" y1="1" x2="20" y2="1" stroke="#dc2626" strokeWidth="2" strokeDasharray="5,5" />
+          </svg>
+          Jammu & Kashmir (Gilgit-Baltistan)
+        </div>
+      </div>
 
       <div style={{ borderRadius: "8px", overflow: "hidden" }}>
         <MapContainer center={[30.5, 69.2]} zoom={5} style={{ height: "400px", width: "100%" }}>
