@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { damageLibrary } from "../data/damageLibrary";
 
+
+
 function CostCalculator() {
   const [selectedAsset, setSelectedAsset] = useState("");
   const [selectedComponent, setSelectedComponent] = useState("");

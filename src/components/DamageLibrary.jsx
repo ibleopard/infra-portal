@@ -19,12 +19,19 @@ function DamageLibrary() {
             onClick={() => setExpandedAsset(expandedAsset === i ? null : i)}
             style={{
               cursor: "pointer",
-              color: "blue",
+              color: "#ffffff",
               marginBottom: "10px",
-              padding: "10px",
-              backgroundColor: "#e3f2fd",
-              borderRadius: "4px",
-              fontWeight: "bold"
+              padding: "12px 15px",
+              backgroundColor: "#1976d2",
+              borderRadius: "6px",
+              fontWeight: "bold",
+              fontSize: "16px",
+              border: "2px solid #1565c0",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              transition: "all 0.2s ease",
+              display: "inline-block",
+              minWidth: "100%",
+              boxSizing: "border-box"
             }}
           >
             {expandedAsset === i ? "▼" : "▶"} {asset.assetType}
@@ -41,12 +48,17 @@ function DamageLibrary() {
                   }
                   style={{
                     cursor: "pointer",
-                    color: "darkgreen",
+                    color: "#ffffff",
                     marginBottom: "8px",
-                    padding: "8px",
-                    backgroundColor: "#f1f8e9",
-                    borderRadius: "4px",
-                    fontWeight: "bold"
+                    padding: "10px 12px",
+                    backgroundColor: "#388e3c",
+                    borderRadius: "6px",
+                    fontWeight: "bold",
+                    fontSize: "15px",
+                    border: "2px solid #2e7d32",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    transition: "all 0.2s ease",
+                    marginLeft: "15px"
                   }}
                 >
                   {expandedComponent === `${i}-${j}` ? "▼" : "▶"} {comp.componentName}
@@ -63,12 +75,17 @@ function DamageLibrary() {
                         }
                         style={{
                           cursor: "pointer",
-                          color: "maroon",
+                          color: "#ffffff",
                           marginBottom: "8px",
-                          padding: "6px",
-                          backgroundColor: "#fce4ec",
-                          borderRadius: "4px",
-                          fontWeight: "bold"
+                          padding: "8px 10px",
+                          backgroundColor: "#d32f2f",
+                          borderRadius: "6px",
+                          fontWeight: "bold",
+                          fontSize: "14px",
+                          border: "2px solid #c62828",
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                          transition: "all 0.2s ease",
+                          marginLeft: "30px"
                         }}
                       >
                         {expandedDamage === `${i}-${j}-${k}` ? "▼" : "▶"} {damage.damageType}
@@ -80,37 +97,44 @@ function DamageLibrary() {
                             borderCollapse: "collapse",
                             width: "100%",
                             marginTop: "8px",
-                            backgroundColor: "#fff"
+                            backgroundColor: "#fff",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                            borderRadius: "4px",
+                            overflow: "hidden",
+                            marginLeft: "30px",
+                            marginBottom: "15px"
                           }}
                         >
                           <thead>
-                            <tr style={{ backgroundColor: "#f5f5f5" }}>
-                              <th style={{ border: "1px solid #ddd", padding: "10px", textAlign: "left" }}>
+                            <tr style={{ backgroundColor: "#263238", color: "#ffffff" }}>
+                              <th style={{ border: "1px solid #e0e0e0", padding: "12px", textAlign: "left", fontWeight: "bold" }}>
                                 Work Item Description
                               </th>
-                              <th style={{ border: "1px solid #ddd", padding: "10px", textAlign: "left" }}>
+                              <th style={{ border: "1px solid #e0e0e0", padding: "12px", textAlign: "left", fontWeight: "bold" }}>
                                 Unit
                               </th>
-                              <th style={{ border: "1px solid #ddd", padding: "10px", textAlign: "right" }}>
+                              <th style={{ border: "1px solid #e0e0e0", padding: "12px", textAlign: "right", fontWeight: "bold" }}>
                                 Rate (₹)
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             {damage.workItems.map((item) => (
-                              <tr key={item.id} style={{ borderBottom: "1px solid #ddd" }}>
-                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                              <tr key={item.id} style={{ borderBottom: "1px solid #e0e0e0", backgroundColor: "#f9f9f9", transition: "background-color 0.2s" }}>
+                                <td style={{ border: "1px solid #e0e0e0", padding: "10px", color: "#333" }}>
                                   {item.description}
                                 </td>
-                                <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                                <td style={{ border: "1px solid #e0e0e0", padding: "10px", color: "#333" }}>
                                   {item.unit}
                                 </td>
                                 <td
                                   style={{
-                                    border: "1px solid #ddd",
-                                    padding: "8px",
+                                    border: "1px solid #e0e0e0",
+                                    padding: "10px",
                                     textAlign: "right",
-                                    fontWeight: "bold"
+                                    fontWeight: "bold",
+                                    color: "#d32f2f",
+                                    fontSize: "15px"
                                   }}
                                 >
                                   {item.rate.toLocaleString()}
