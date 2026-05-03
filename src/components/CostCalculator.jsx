@@ -61,7 +61,7 @@ function CostCalculator() {
 
   return (
     <div className="calculator">
-      <h2>Infrastructure Damage Cost Calculator</h2>
+      <h2 style={{ color: "#2e7d32" }}>Infrastructure Damage Cost Calculator</h2>
 
       {/* Cascading Dropdowns */}
       <div className="dropdown-section">

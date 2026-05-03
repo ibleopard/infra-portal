@@ -8,7 +8,7 @@ function DamageLibrary() {
 
   return (
     <div className="damage-library">
-      <h2>Damage Type Reference Library</h2>
+      <h2 style={{ color: "#2e7d32" }}>Damage Type Reference Library</h2>
       <p style={{ color: "#666", marginBottom: "20px" }}>
         Complete offline reference of all damage types, work items, and unit rates.
       </p>
