@@ -35,7 +35,7 @@ function FitToGeoJson({ data }) {
   return null;
 }
 
-function Map() {
+function Map({ districtSummaries = {} }) {
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -98,9 +98,31 @@ function Map() {
       };
     }
 
+    // Get district summary if available
+    const district = pickLabel(feature, ["NAME_3", "district", "name"], "Unknown");
+    const summary = districtSummaries[district];
+    
+    // Apply color based on assessment count
+    let fillColor = "transparent";
+    let fillOpacity = 0;
+    
+    if (summary) {
+      const recordCount = summary.count || 0;
+      if (recordCount > 10) {
+        fillColor = "#dc2626";
+        fillOpacity = 0.3;
+      } else if (recordCount > 5) {
+        fillColor = "#f59e0b";
+        fillOpacity = 0.3;
+      } else if (recordCount > 0) {
+        fillColor = "#10b981";
+        fillOpacity = 0.3;
+      }
+    }
+
     return {
-      fillColor: "transparent",
-      fillOpacity: 0,
+      fillColor,
+      fillOpacity,
       color: "#1f2937",
       weight: 1.5,
       opacity: 0.8,
@@ -110,17 +132,45 @@ function Map() {
   const onEachFeature = (feature, layer) => {
     const district = pickLabel(feature, ["NAME_3", "district", "name"], "Unknown");
     const province = pickLabel(feature, ["NAME_1", "division", "province"], "N/A");
+    const summary = districtSummaries[district];
+
+    let popupContent = `<b>${district}</b><br/>Province: ${province}`;
+
+    if (summary) {
+      popupContent += `<br/><hr style="margin: 6px 0;"/>`;
+      popupContent += `<strong>Assessment Summary:</strong><br/>`;
+      popupContent += `Records: <strong>${summary.count}</strong><br/>`;
+      popupContent += `Total Cost: <strong>${summary.totalCost}</strong><br/>`;
+      popupContent += `Avg Cost: <strong>${summary.averageCost}</strong>`;
+
+      if (Object.keys(summary.damageBreakdown || {}).length > 0) {
+        popupContent += `<br/><strong>Damage Types:</strong><br/>`;
+        Object.entries(summary.damageBreakdown).forEach(([type, count]) => {
+          popupContent += `${type}: ${count}<br/>`;
+        });
+      }
+    }
 
     layer.on({
       mouseover: (event) => {
-        event.target.setStyle({ weight: 2.5, color: "#ef4444" });
+        event.target.setStyle({ 
+          weight: 2.5, 
+          color: "#ef4444",
+          fillOpacity: (districtSummaries[district]?.count || 0) > 0 ? 0.5 : 0
+        });
       },
       mouseout: (event) => {
         event.target.setStyle(styleFeature(feature));
       },
+      click: (event) => {
+        event.target.openPopup();
+      }
     });
 
-    layer.bindPopup(`<b>${district}</b><br/>Province: ${province}`);
+    layer.bindPopup(popupContent, {
+      maxWidth: 300,
+      className: 'district-summary-popup'
+    });
   };
 
   return (
@@ -148,6 +198,7 @@ function Map() {
           gap: "20px",
           fontSize: "12px",
           color: "#374151",
+          flexWrap: "wrap"
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -166,6 +217,18 @@ function Map() {
             <line x1="0" y1="1" x2="20" y2="1" stroke="#dc2626" strokeWidth="2" strokeDasharray="5,5" />
           </svg>
           Jammu & Kashmir (Gilgit-Baltistan)
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "16px", height: "16px", background: "#dc2626", opacity: 0.3, borderRadius: "2px" }} />
+          10+ Assessments
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "16px", height: "16px", background: "#f59e0b", opacity: 0.3, borderRadius: "2px" }} />
+          5-10 Assessments
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "16px", height: "16px", background: "#10b981", opacity: 0.3, borderRadius: "2px" }} />
+          1-4 Assessments
         </div>
       </div>
 
