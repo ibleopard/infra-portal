@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import SummaryCards from "./components/SummaryCards";
 import Charts from "./components/Charts";
@@ -16,14 +16,15 @@ function App() {
   const [uploadedRecords, setUploadedRecords] = useState([]);
   const [allAssessments, setAllAssessments] = useState([]);
   const [districtSummaries, setDistrictSummaries] = useState({});
+  const [prefilledFormData, setPrefilledFormData] = useState(null);
 
   // Fetch assessments from API on mount
-  React.useEffect(() => {
+  useEffect(() => {
     fetchAssessments();
   }, []);
 
   // Update district summaries when records change
-  React.useEffect(() => {
+  useEffect(() => {
     const allRecords = [...uploadedRecords, ...allAssessments];
     const grouped = groupRecordsByDistrict(allRecords);
     const summaries = {};
@@ -53,23 +54,37 @@ function App() {
     
     // Automatically save all records to the database
     const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    let successCount = 0;
     
     for (const record of records) {
       try {
-        await fetch(`${API_BASE_URL}/api/assessments`, {
+        const response = await fetch(`${API_BASE_URL}/api/assessments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(record),
         });
+        if (response.ok) {
+          successCount++;
+        }
       } catch (err) {
         console.error('Error saving record:', err);
       }
     }
 
     // Refresh assessments list
-    fetchAssessments();
+    await fetchAssessments();
+    
+    // Auto-navigate to reports to show uploaded data
+    if (successCount > 0) {
+      setCurrentPage('reports');
+    }
+  };
+
+  const handleEditRecord = (record) => {
+    setPrefilledFormData(record);
+    setCurrentPage('data-form');
   };
 
   return (
@@ -97,10 +112,17 @@ function App() {
         </div>
       ) : currentPage === "reports" ? (
         <div style={{ padding: "20px" }}>
-          <Reports uploadedRecords={uploadedRecords} allAssessments={allAssessments} />
+          <Reports 
+            uploadedRecords={uploadedRecords} 
+            allAssessments={allAssessments}
+            onEditRecord={handleEditRecord}
+          />
         </div>
       ) : (
-        <DataForm onRecordSaved={fetchAssessments} />
+        <DataForm 
+          prefilledData={prefilledFormData} 
+          onRecordSaved={fetchAssessments}
+        />
       )}
 
       {showUploadModal && (

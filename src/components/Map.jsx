@@ -5,8 +5,118 @@ import "leaflet/dist/leaflet.css";
 
 const GEOJSON_SOURCES = [
   "/data/pakistan-districts.geojson",
-  "https://raw.githubusercontent.com/codeforpakistan/data/master/geo/pakistan_districts.geojson",
+  //"https://raw.githubusercontent.com/codeforpakistan/data/master/geo/pakistan_districts.geojson",
 ];
+const JAMMU_DIVISION = {
+  type: "Feature",
+  properties: {
+    NAME_0: "Pakistan",
+    NAME_1: "Jammu and Kashmir",
+    NAME_2: "Jammu Division",
+    NAME_3: "Jammu Division",
+    TYPE_3: "Division",
+    ENGTYPE_3: "Division",
+    SOURCE: "manual-approximate",
+  },
+  geometry: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [74.25, 32.35],
+        [75.00, 32.35],
+        [75.75, 32.55],
+        [76.30, 32.90],
+        [76.95, 33.20],
+        [76.95, 33.75],
+        [76.55, 34.05],
+        [75.90, 34.10],
+        [75.25, 34.00],
+        [74.70, 33.80],
+        [74.30, 33.50],
+        [73.85, 33.30],
+        [73.65, 32.95],
+        [74.25, 32.35],
+      ],
+    ],
+  },
+};
+
+const KASHMIR_DIVISION = {
+  type: "Feature",
+  properties: {
+    NAME_0: "Pakistan",
+    NAME_1: "Jammu and Kashmir",
+    NAME_2: "Kashmir Division",
+    NAME_3: "Kashmir Division",
+    TYPE_3: "Division",
+    ENGTYPE_3: "Division",
+    SOURCE: "manual-approximate",
+  },
+  geometry: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [73.75, 33.65],
+        [74.35, 33.75],
+        [75.10, 33.90],
+        [75.65, 34.10],
+        [75.95, 34.45],
+        [75.80, 34.95],
+        [75.20, 35.25],
+        [74.50, 35.20],
+        [73.95, 34.95],
+        [73.60, 34.55],
+        [73.50, 34.10],
+        [73.75, 33.65],
+      ],
+    ],
+  },
+};
+
+const LADAKH_DIVISION = {
+  type: "Feature",
+  properties: {
+    NAME_0: "Pakistan",
+    NAME_1: "Ladakh",
+    NAME_2: "Ladakh Division",
+    NAME_3: "Ladakh Division",
+    TYPE_3: "Division",
+    ENGTYPE_3: "Division",
+    SOURCE: "manual-approximate",
+  },
+  geometry: {
+    type: "Polygon",
+    coordinates: [
+      [
+        [75.60, 32.95],
+        [76.30, 33.20],
+        [77.10, 33.45],
+        [78.00, 33.75],
+        [78.95, 34.05],
+        [79.60, 34.55],
+        [79.70, 35.25],
+        [78.90, 35.75],
+        [77.95, 35.90],
+        [77.10, 35.65],
+        [76.35, 35.20],
+        [75.80, 34.65],
+        [75.55, 34.00],
+        [75.60, 32.95],
+      ],
+    ],
+  },
+};
+const MANUAL_DISTRICT_FEATURES = [
+  JAMMU_DIVISION,
+  KASHMIR_DIVISION,
+  LADAKH_DIVISION,
+];
+
+const DISTRICT_BOUNDARY_REPLACEMENTS = {
+  "Jammu Division": JAMMU_DIVISION.geometry,
+  "Kashmir Division": KASHMIR_DIVISION.geometry,
+  "Ladakh Division": LADAKH_DIVISION.geometry,
+};
 
 const pickLabel = (feature, keys, fallback = "Unknown") => {
   for (const key of keys) {
@@ -56,10 +166,29 @@ function Map({ districtSummaries = {} }) {
 
           const data = await response.json();
           if (!ignore && data?.features?.length) {
-            setGeoJsonData(data);
-            setIsLoading(false);
-            return;
-          }
+          const correctedData = {
+            ...data,
+            features: data.features.map((feature) => {
+              const currentDistrict = feature?.properties?.NAME_3;
+              const boundaryFix = DISTRICT_BOUNDARY_REPLACEMENTS[currentDistrict];
+
+              if (!boundaryFix) return feature;
+
+              return {
+                ...feature,
+                properties: {
+                  ...feature.properties,
+                  SOURCE: "boundary-corrected-in-code",
+                },
+                geometry: boundaryFix,
+              };
+            }),
+          };
+
+          setGeoJsonData(correctedData);
+          setIsLoading(false);
+          return;
+        }
         } catch {
           // Try next source
         }
@@ -172,6 +301,15 @@ function Map({ districtSummaries = {} }) {
       className: 'district-summary-popup'
     });
   };
+const mergedGeoJsonData = geoJsonData
+  ? {
+      ...geoJsonData,
+      features: [
+        ...(geoJsonData.features || []),
+        ...MANUAL_DISTRICT_FEATURES,
+      ],
+    }
+  : null;
 
   return (
     <div
@@ -239,12 +377,17 @@ function Map({ districtSummaries = {} }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; CARTO'
           />
 
-          {geoJsonData && (
-            <>
-              <GeoJSON data={geoJsonData} style={styleFeature} onEachFeature={onEachFeature} />
-              <FitToGeoJson data={geoJsonData} />
-            </>
-          )}
+          {mergedGeoJsonData && (
+          <>
+            <GeoJSON
+              key={mergedGeoJsonData.features.length}
+              data={mergedGeoJsonData}
+              style={styleFeature}
+              onEachFeature={onEachFeature}
+            />
+            <FitToGeoJson data={mergedGeoJsonData} />
+          </>
+           )}
         </MapContainer>
       </div>
     </div>

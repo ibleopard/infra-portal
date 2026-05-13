@@ -92,14 +92,6 @@ function transformExcelRow(row) {
 }
 
 /**
- * Parse PDF file (placeholder for future implementation)
- */
-export async function parsePdfFile(file) {
-  console.warn('PDF parsing not yet implemented. Using Excel parser.');
-  throw new Error('PDF parsing not yet implemented. Please upload an Excel file.');
-}
-
-/**
  * Main file upload handler that determines file type and parses accordingly
  */
 export async function parseUploadedFile(file) {
@@ -107,10 +99,8 @@ export async function parseUploadedFile(file) {
   
   if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls') || fileName.includes('spreadsheet')) {
     return parseExcelFile(file);
-  } else if (fileName.endsWith('.pdf')) {
-    return parsePdfFile(file);
   } else {
-    throw new Error('Unsupported file format. Please upload an Excel file (.xlsx/.xls) or PDF.');
+    throw new Error('Unsupported file format. Please upload an Excel file (.xlsx or .xls)');
   }
 }
 

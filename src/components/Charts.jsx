@@ -15,12 +15,12 @@ import {
 function Charts() {
   // Sample data for damage by province
   const damageData = [
-    { province: "Ontario", damage: 45 },
-    { province: "Quebec", damage: 38 },
-    { province: "British Columbia", damage: 32 },
-    { province: "Alberta", damage: 28 },
-    { province: "Manitoba", damage: 22 },
-    { province: "Saskatchewan", damage: 18 },
+    { province: "KPK", damage: 45 },
+    { province: "GB", damage: 38 },
+    { province: "AJK", damage: 12 },
+    { province: "Punjab", damage: 28 },
+    { province: "Sindh", damage: 22 },
+    { province: "Balochistan", damage: 18 },
   ];
 
   // Sample data for status distribution

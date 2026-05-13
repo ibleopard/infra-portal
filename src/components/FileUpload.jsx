@@ -101,13 +101,13 @@ const FileUpload = ({ onFilesParsed, onClose }) => {
                   <input
                     type="file"
                     onChange={handleInputChange}
-                    accept=".xlsx,.xls,.pdf"
+                    accept=".xlsx,.xls"
                     disabled={loading}
                     style={{ display: 'none' }}
                   />
                 </label>
                 <p className="file-info">
-                  Supported formats: Excel (.xlsx, .xls), PDF<br />
+                  Supported format: Excel (.xlsx, .xls)<br />
                   Maximum file size: 5MB
                 </p>
               </div>

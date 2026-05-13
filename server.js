@@ -131,6 +131,7 @@ app.post('/api/assessments', async (req, res) => {
     } = req.body;
 
     const id = `assessment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const now = new Date().toISOString();
 
     await client.execute({
       sql: `INSERT INTO damage_assessments (
@@ -139,8 +140,9 @@ app.post('/api/assessments', async (req, res) => {
         informationSource, infrastructureCategory, infrastructureType, roadType,
         bridgeType, buildingType, damageExtent, damageStatus, estimatedCost,
         costConfidence, ownership, populationAffected, criticalImpact,
-        immediateActions, supportRequired, remarks, verifiedBy, verifiedDate
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        immediateActions, supportRequired, remarks, verifiedBy, verifiedDate,
+        createdAt, updatedAt
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       args: [
         id, caseId, province, district, unionCouncil, landmark, latitude, longitude,
         assessmentDate, assessmentMember, locationVerified, eventDate, eventType,
@@ -148,6 +150,7 @@ app.post('/api/assessments', async (req, res) => {
         bridgeType, buildingType, damageExtent, damageStatus, estimatedCost,
         costConfidence, ownership, populationAffected, criticalImpact,
         immediateActions, supportRequired, remarks, verifiedBy, verifiedDate,
+        now, now
       ],
     });
 

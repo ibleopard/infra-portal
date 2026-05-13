@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { groupRecordsByDistrict, calculateDistrictSummary } from '../utils/fileUploadHandler';
 import './Reports.css';
 
-const Reports = ({ uploadedRecords = [], allAssessments = [] }) => {
+const Reports = ({ uploadedRecords = [], allAssessments = [], onEditRecord = null }) => {
   const [activeTab, setActiveTab] = useState('all');
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -206,6 +206,7 @@ const Reports = ({ uploadedRecords = [], allAssessments = [] }) => {
                     <th>Damage Extent</th>
                     <th>Estimated Cost (PKR)</th>
                     <th>Date</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -224,6 +225,17 @@ const Reports = ({ uploadedRecords = [], allAssessments = [] }) => {
                         {record.estimatedCost ? parseFloat(record.estimatedCost).toLocaleString() : '-'}
                       </td>
                       <td>{record.assessmentDate || record.eventDate || '-'}</td>
+                      <td>
+                        {onEditRecord && (
+                          <button 
+                            className="action-btn edit-btn"
+                            onClick={() => onEditRecord(record)}
+                            title="Edit in form"
+                          >
+                            ✎ Edit
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

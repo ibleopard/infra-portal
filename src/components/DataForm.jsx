@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './DataForm.css';
 
-const DataForm = () => {
+const DataForm = ({ prefilledData = null, onRecordSaved = null }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
@@ -45,7 +45,14 @@ const DataForm = () => {
 
   useEffect(() => {
     fetchAssessments();
-  }, []);
+    // Prefill form if data is passed
+    if (prefilledData) {
+      setFormData((prev) => ({
+        ...prev,
+        ...prefilledData,
+      }));
+    }
+  }, [prefilledData]);
 
   const fetchAssessments = async () => {
     try {
@@ -132,6 +139,10 @@ const DataForm = () => {
       setSuccess(`Assessment ${editingId ? 'updated' : 'created'} successfully!`);
       resetForm();
       fetchAssessments();
+      // Call parent callback if provided
+      if (onRecordSaved) {
+        onRecordSaved();
+      }
     } catch (err) {
       setError(err.message || 'An error occurred');
       console.error('Form submission error:', err);
